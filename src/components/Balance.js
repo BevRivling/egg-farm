@@ -1,14 +1,14 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-const Balance = ({ euros, sol }) => (
+const Balance = ({ currency, currSym }) => (
   <p>
-    Balance: € {euros} - S/. {sol}
+    Balance: {currSym} {currency}
   </p>
 );
 
 Balance.propTypes = {
-  euros: PropTypes.number.isRequired
+  currency: PropTypes.number.isRequired
 };
 
 export default Balance;

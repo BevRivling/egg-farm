@@ -1,7 +1,7 @@
 .App {
   text-align: center;
   background-color: peru;
-  padding: 100px;
+  padding: 50px 100px 100px 100px;
   font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
   color: darkolivegreen;
   font-size: 1.2em;
@@ -22,4 +22,12 @@ img {
   max-width: 7.8em;
   margin-left: 200px;
   margin-right: 200px;
+}
+
+.container {
+  display: flex;
+}
+
+.item {
+  flex-grow: 1;
 }

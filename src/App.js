@@ -1,27 +1,33 @@
 import React, { Component } from "react";
 import "./App.css";
 import Header from "./components/Header";
-import EggCounter from "./components/EggCounter";
+import PeruEggCounter from "./components/PeruEggCounter";
+import EuEggCounter from "./components/EuEggCounter";
 import Balance from "./components/Balance";
 import DinoCount from "./components/DinoCount";
 import BuyDinosaurButton from "./components/BuyDinosaur";
 import ShipADozenEggs from "./components/ShipADozenEggs";
 import ConvertEurosToSol from "./components/ConvertEurosToSol";
+import eu from "./img/eu.png";
+import peru from "./img/peru.png";
 
 class App extends Component {
   state = {
+    //boules
     startLay: false,
+    startSell: false,
 
     // Currency
     sol: 210,
     euros: 0,
     eurosToSol: 3.84,
     solToEuros: 0.26,
-
-    // Eggs
-    eggCount: 0,
-    eggCost: 2,
+    //Peru
+    peruEggCount: 0,
     shippingCost: 5,
+    //EU
+    euEggCount: 0,
+    eggCost: 2,
 
     // Dinosaur Shit
     dinoCount: 0,
@@ -32,16 +38,25 @@ class App extends Component {
     return (
       <div className="App">
         <Header />
-
-        <Balance sol={this.state.sol} euros={this.state.euros} />
-        <EggCounter eggCount={this.state.eggCount} />
-        <DinoCount dinoCount={this.state.dinoCount} />
-        <BuyDinosaurButton
-          buyDinosaur={this.buyDinosaur}
-          layEggs={this.layEggs}
-        />
-        <ShipADozenEggs shipEggs={this.shipEggs} />
-        <ConvertEurosToSol convertEurosToSol={this.convertEurosToSol} />
+        <div className="container">
+          <div className="item" id="peru">
+            <img alt="peru" src={peru} />
+            <Balance currency={this.state.sol} currSym={"S/."} />
+            <PeruEggCounter peruEggCount={this.state.peruEggCount} />{" "}
+            <DinoCount dinoCount={this.state.dinoCount} />
+            <BuyDinosaurButton
+              buyDinosaur={this.buyDinosaur}
+              layEggs={this.layEggs}
+            />
+            <ShipADozenEggs shipEggs={this.shipEggs} />{" "}
+          </div>
+          <div className="item" id="eu">
+            <img alt="eu" src={eu} />
+            <Balance currency={this.state.euros} currSym="€" />
+            <EuEggCounter euEggCount={this.state.euEggCount} />
+            <ConvertEurosToSol convertEurosToSol={this.convertEurosToSol} />
+          </div>
+        </div>
       </div>
     );
   }
@@ -49,12 +64,12 @@ class App extends Component {
   layEggs = () => {
     if (!this.state.startLay) {
       setInterval(() => {
-        const { eggCount, dinoCount } = this.state;
+        const { peruEggCount, dinoCount } = this.state;
         this.setState({
-          eggCount: eggCount + dinoCount,
+          peruEggCount: peruEggCount + dinoCount,
           startLay: true
         });
-      }, 2000);
+      }, 500);
     }
   };
 
@@ -64,6 +79,7 @@ class App extends Component {
         dinoCount: this.state.dinoCount + 1,
         sol: Math.floor(this.state.sol - this.state.dinoCost)
       });
+      prompt("What would you like to call your dinosaur?");
     } else {
       alert("YOU NEED MOAR SOL BRO");
     }
@@ -72,17 +88,22 @@ class App extends Component {
   shipEggs = () => {
     if (
       this.state.sol >= this.state.shippingCost &&
-      this.state.eggCount >= 12
+      this.state.peruEggCount >= 12
     ) {
       this.setState({
-        eggCount: this.state.eggCount - 12,
-        euros: Math.floor(this.state.euros + this.state.eggCost * 12),
+        peruEggCount: this.state.peruEggCount - 12,
+        // euros: Math.floor(this.state.euros + this.state.eggCost * 12),
+        euEggCount: this.state.euEggCount + 12,
         sol: Math.floor(this.state.sol - 5)
       });
+      if (!this.state.startSell) {
+        this.setState({ startSell: true });
+        this.startSellingEggs();
+      }
     } else {
       if (this.state.sol < this.state.shippingCost)
         alert("YOU DON'T HAVE ENUFF SOL TO SHIP ME");
-      if (this.state.eggCount < 12)
+      if (this.state.peruEggCount < 12)
         alert("I NEED AT LEAST 11 OTHER M8S, AMIGO");
     }
   };
@@ -93,6 +114,20 @@ class App extends Component {
       sol: Math.floor(sol + euros * eurosToSol),
       euros: 0
     });
+  };
+  startSellingEggs = () => {
+    //const { euEggCount, euros, eggCost } = this.state;
+    setInterval(() => {
+      console.log(this.state.euEggCount);
+      if (this.state.euEggCount > 0)
+        this.setState((state, props) => {
+          return {
+            euEggCount: state.euEggCount - 1,
+            euros: state.euros + state.eggCost
+          };
+        });
+      // this.setState({ euEggCount: euEggCount - 1, euros: euros + eggCost });
+    }, 250);
   };
 }
 
