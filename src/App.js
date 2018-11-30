@@ -13,9 +13,10 @@ class App extends Component {
     startLay: false,
 
     // Currency
-    sol: 110,
+    sol: 210,
     euros: 0,
-    eurosToSol: 0.26,
+    eurosToSol: 3.84,
+    solToEuros: 0.26,
 
     // Eggs
     eggCount: 0,
@@ -24,13 +25,14 @@ class App extends Component {
 
     // Dinosaur Shit
     dinoCount: 0,
-    dinoCost: 100
+    dinoCost: 200
   };
 
   render() {
     return (
       <div className="App">
         <Header />
+
         <Balance sol={this.state.sol} euros={this.state.euros} />
         <EggCounter eggCount={this.state.eggCount} />
         <DinoCount dinoCount={this.state.dinoCount} />
@@ -60,7 +62,7 @@ class App extends Component {
     if (this.state.sol >= this.state.dinoCost) {
       this.setState({
         dinoCount: this.state.dinoCount + 1,
-        sol: this.state.sol - this.state.dinoCost
+        sol: Math.floor(this.state.sol - this.state.dinoCost)
       });
     } else {
       alert("YOU NEED MOAR SOL BRO");
@@ -74,8 +76,8 @@ class App extends Component {
     ) {
       this.setState({
         eggCount: this.state.eggCount - 12,
-        euros: this.state.euros + this.state.eggCost * 12,
-        sol: this.state.sol - 5
+        euros: Math.floor(this.state.euros + this.state.eggCost * 12),
+        sol: Math.floor(this.state.sol - 5)
       });
     } else {
       if (this.state.sol < this.state.shippingCost)
@@ -88,7 +90,7 @@ class App extends Component {
   convertEurosToSol = () => {
     const { sol, euros, eurosToSol } = this.state;
     this.setState({
-      sol: sol + euros * eurosToSol,
+      sol: Math.floor(sol + euros * eurosToSol),
       euros: 0
     });
   };
