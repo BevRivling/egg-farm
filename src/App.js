@@ -10,10 +10,15 @@ import ShipADozenEggs from "./components/ShipADozenEggs";
 import ConvertEurosToSol from "./components/ConvertEurosToSol";
 import eu from "./img/eu.png";
 import peru from "./img/peru.png";
+import DinoPen from "./components/DinoPen";
+import AlpacaSilo from "./components/AlpacaSilo";
 
 class App extends Component {
   state = {
-    //boules
+    // Speed
+    speed: 0.3,
+
+    //Boules
     startLay: false,
     startSell: false,
 
@@ -22,16 +27,22 @@ class App extends Component {
     euros: 0,
     eurosToSol: 3.84,
     solToEuros: 0.26,
+
     //Peru
     peruEggCount: 0,
     shippingCost: 5,
+    alpacaCost: 50,
+    alpacaSilo: 100,
+
     //EU
     euEggCount: 0,
     eggCost: 2,
 
     // Dinosaur Shit
+    dinoPen: [],
     dinoCount: 0,
-    dinoCost: 200
+    dinoCost: 200,
+    dinoEggsPerYear: 10
   };
 
   render() {
@@ -44,11 +55,14 @@ class App extends Component {
             <Balance currency={this.state.sol} currSym={"S/."} />
             <PeruEggCounter peruEggCount={this.state.peruEggCount} />{" "}
             <DinoCount dinoCount={this.state.dinoCount} />
+            <AlpacaSilo alpacaSilo={this.state.alpacaSilo} />
             <BuyDinosaurButton
               buyDinosaur={this.buyDinosaur}
               layEggs={this.layEggs}
             />
-            <ShipADozenEggs shipEggs={this.shipEggs} />{" "}
+            <ShipADozenEggs shipEggs={this.shipEggs} />
+            <DinoPen dinoPen={this.state.dinoPen} />
+            {/* Bulk buy alpacas button */}
           </div>
           <div className="item" id="eu">
             <img alt="eu" src={eu} />
@@ -64,22 +78,28 @@ class App extends Component {
   layEggs = () => {
     if (!this.state.startLay) {
       setInterval(() => {
-        const { peruEggCount, dinoCount } = this.state;
-        this.setState({
-          peruEggCount: peruEggCount + dinoCount,
+        // const { peruEggCount, dinoCount } = this.state;
+        this.setState(prevState => ({
+          peruEggCount: prevState.peruEggCount + prevState.dinoCount,
           startLay: true
-        });
-      }, 500);
+        }));
+        this.handleDinosaurs();
+      }, this.state.speed * 2000);
     }
   };
 
   buyDinosaur = () => {
     if (this.state.sol >= this.state.dinoCost) {
-      this.setState({
-        dinoCount: this.state.dinoCount + 1,
-        sol: Math.floor(this.state.sol - this.state.dinoCost)
-      });
-      prompt("What would you like to call your dinosaur?");
+      const dinoName = prompt("What would you like to call your dinosaur?");
+      this.setState(prevState => ({
+        dinoCount: prevState.dinoCount + 1,
+        sol: Math.floor(prevState.sol - prevState.dinoCost),
+
+        dinoPen: [
+          ...prevState.dinoPen,
+          { name: dinoName, age: 0, eggCount: 0, hunger: [1, 1, 1, 1, 1] }
+        ]
+      }));
     } else {
       alert("YOU NEED MOAR SOL BRO");
     }
@@ -126,8 +146,21 @@ class App extends Component {
             euros: state.euros + state.eggCost
           };
         });
-      // this.setState({ euEggCount: euEggCount - 1, euros: euros + eggCost });
-    }, 250);
+    }, this.state.speed * 1000);
+  };
+
+  handleDinosaurs = () => {
+    this.setState(prevState => ({
+      dinoPen: prevState.dinoPen.map(dinosaur => {
+        console.log(dinosaur.eggCount);
+        return {
+          ...dinosaur,
+          eggCount: dinosaur.eggCount + 1,
+          age: Math.floor(dinosaur.eggCount / this.state.dinoEggsPerYear)
+        };
+      }),
+      alpacaSilo: prevState.alpacaSilo - prevState.dinoCount / 3
+    }));
   };
 }
 

@@ -31,3 +31,12 @@ img {
 .item {
   flex-grow: 1;
 }
+
+li {
+  list-style: none;
+  flex-grow: 1;
+}
+
+.alpaca {
+  max-width: 30px;
+}
