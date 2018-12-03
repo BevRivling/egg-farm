@@ -22,6 +22,7 @@ class App extends Component {
     //Boules
     startLay: false,
     startSell: false,
+    startDinos: false,
 
     // Currency
     sol: 210,
@@ -88,13 +89,13 @@ class App extends Component {
           startLay: true
         }));
 
-        this.handleDinosaurs();
         // this.isGameOver();
       }, this.state.speed * 2000);
     }
   };
 
   buyDinosaur = () => {
+    this.handleDinosaurs();
     if (this.state.sol >= this.state.dinoCost) {
       const dinoName = prompt("What would you like to call your dinosaur?");
       this.setState((prevState) => ({
@@ -172,37 +173,42 @@ class App extends Component {
   };
 
   handleDinosaurs = () => {
-    this.setState((prevState) => {
-      const checkAlpacaSilo = prevState.alpacaSilo;
-      return {
-        dinoPen: prevState.dinoPen.map((dinosaur) => {
-          if (dinosaur.hunger.length < 1) this.killDinosaur();
+    if (!this.state.startDinos) {
+      setInterval(() => {
+        this.setState((prevState) => {
+          const checkAlpacaSilo = prevState.alpacaSilo;
           return {
-            ...dinosaur,
-            eggCount: dinosaur.eggCount + dinosaur.rateOfLay,
-            age: Math.floor(dinosaur.eggCount / this.state.dinoEggsPerYear),
-            hunger:
-              checkAlpacaSilo < 1 && Math.random() < 0.33
-                ? dinosaur.hunger.slice(0, dinosaur.hunger.length - 1)
-                : dinosaur.hunger,
-            rateOfLay:
-              Math.ceil(
-                dinosaur.age < 15
-                  ? dinosaur.age / 3
-                  : dinosaur.age > 30
-                  ? 5 - dinosaur.age / 3
-                  : 5
-              ) + 1
-          };
-        }),
+            startDinos: true,
+            dinoPen: prevState.dinoPen.map((dinosaur) => {
+              if (dinosaur.hunger.length < 1) this.killDinosaur();
+              return {
+                ...dinosaur,
+                eggCount: dinosaur.eggCount + dinosaur.rateOfLay,
+                age: Math.floor(dinosaur.eggCount / this.state.dinoEggsPerYear),
+                hunger:
+                  checkAlpacaSilo < 1 && Math.random() < 0.33
+                    ? dinosaur.hunger.slice(0, dinosaur.hunger.length - 1)
+                    : dinosaur.hunger,
+                rateOfLay:
+                  Math.ceil(
+                    dinosaur.age < 15
+                      ? dinosaur.age / 3
+                      : dinosaur.age > 30
+                      ? 5 - dinosaur.age / 3
+                      : 5
+                  ) + 1
+              };
+            }),
 
-        alpacaSilo:
-          checkAlpacaSilo > 1
-            ? prevState.alpacaSilo -
-              prevState.dinoCount * Math.floor(Math.random() * 3)
-            : 0 //CHANGED
-      };
-    });
+            alpacaSilo:
+              checkAlpacaSilo > 1
+                ? prevState.alpacaSilo -
+                  prevState.dinoCount * Math.floor(Math.random() * 3)
+                : 0 //CHANGED
+          };
+        });
+      }, this.state.speed * 2000);
+    }
   };
   killDinosaur = () => {
     this.setState((prevState) => {
