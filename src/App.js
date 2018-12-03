@@ -84,7 +84,7 @@ class App extends Component {
         const eggRound = this.state.dinoPen.reduce((acc, dinosaur) => {
           return acc + dinosaur.rateOfLay;
         }, 0);
-        this.setState((prevState) => ({
+        this.setState(prevState => ({
           peruEggCount: prevState.peruEggCount + eggRound,
           startLay: true
         }));
@@ -98,7 +98,7 @@ class App extends Component {
     this.handleDinosaurs();
     if (this.state.sol >= this.state.dinoCost) {
       const dinoName = prompt("What would you like to call your dinosaur?");
-      this.setState((prevState) => ({
+      this.setState(prevState => ({
         dinoCount: prevState.dinoCount + 1,
         sol: Math.floor(prevState.sol - prevState.dinoCost),
 
@@ -120,7 +120,7 @@ class App extends Component {
 
   buyAlpacas = () => {
     if (this.state.sol >= this.state.alpacaCost * 100) {
-      this.setState((prevState) => ({
+      this.setState(prevState => ({
         alpacaSilo: prevState.alpacaSilo + 100,
         sol: Math.floor(prevState.sol - prevState.alpacaCost * 100)
       }));
@@ -175,28 +175,21 @@ class App extends Component {
   handleDinosaurs = () => {
     if (!this.state.startDinos) {
       setInterval(() => {
-        this.setState((prevState) => {
+        this.setState(prevState => {
           const checkAlpacaSilo = prevState.alpacaSilo;
           return {
             startDinos: true,
-            dinoPen: prevState.dinoPen.map((dinosaur) => {
+            dinoPen: prevState.dinoPen.map(dinosaur => {
               if (dinosaur.hunger.length < 1) this.killDinosaur();
               return {
                 ...dinosaur,
                 eggCount: dinosaur.eggCount + dinosaur.rateOfLay,
-                age: Math.floor(dinosaur.eggCount / this.state.dinoEggsPerYear),
+                age: dinosaur.age + 0.1,
                 hunger:
                   checkAlpacaSilo < 1 && Math.random() < 0.33
                     ? dinosaur.hunger.slice(0, dinosaur.hunger.length - 1)
                     : dinosaur.hunger,
-                rateOfLay:
-                  Math.ceil(
-                    dinosaur.age < 15
-                      ? dinosaur.age / 3
-                      : dinosaur.age > 30
-                      ? 5 - dinosaur.age / 3
-                      : 5
-                  ) + 1
+                rateOfLay: this.calcRate(dinosaur.age)
               };
             }),
 
@@ -211,13 +204,25 @@ class App extends Component {
     }
   };
   killDinosaur = () => {
-    this.setState((prevState) => {
+    this.setState(prevState => {
       return {
-        dinoPen: prevState.dinoPen.filter((dinosaur) => {
+        dinoPen: prevState.dinoPen.filter(dinosaur => {
           return dinosaur.hunger.length > 0;
         })
       };
     });
+  };
+
+  calcRate = age => {
+    if (age < 15) {
+      return Math.ceil(Math.random() * (age / 3));
+    } else if (age > 30 && age < 46) {
+      return 5 - Math.ceil((Math.random() * (age - 30)) / 3);
+    } else if (age > 45) {
+      return Math.ceil(Math.random() * 1);
+    } else {
+      return Math.ceil(Math.random() * 5);
+    }
   };
 
   // isGameOver = () => {

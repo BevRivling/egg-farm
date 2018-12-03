@@ -4,12 +4,12 @@ import alpaca from "../img/alpaca.png";
 const DinoPen = ({ dinoPen }) => {
   return (
     <ul>
-      {dinoPen.map((dinosaur) => {
+      {dinoPen.map(dinosaur => {
         return (
           <li key={dinosaur.name}>
             <span className="text">
-              Name: {dinosaur.name} - Age: {dinosaur.age} - Eggs Laid:{" "}
-              {dinosaur.eggCount}{" "}
+              Name: {dinosaur.name} - Age: {Math.floor(dinosaur.age)} - Eggs
+              Laid: {dinosaur.eggCount}{" "}
             </span>
             <span className="alpaca-span">
               {dinosaur.hunger.map((hung, index) => (
