@@ -34,9 +34,18 @@ img {
 
 li {
   list-style: none;
+  display: flex;
+}
+
+.text {
   flex-grow: 1;
 }
 
+.alpaca-span {
+  flex-flow: 2;
+}
 .alpaca {
+  margin-left: 5px;
+  margin-right: 5px;
   max-width: 30px;
 }
